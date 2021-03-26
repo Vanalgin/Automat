@@ -102,5 +102,5 @@ function check(cards, values){
     if(combo[0].flash == 1 && cards[0].value == "10" && cards[1].value == "J" && cards[2].value == "Q" && cards[3].value == "K" && cards[4].value == "A"){
         combo[0].flashRoyal = 1
     }
-    console.log(cards, combo)
+    console.log(cards, combo)//
 }
