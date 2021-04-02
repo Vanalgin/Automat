@@ -1,1 +1,0 @@
-{"version":3,"sources":["css/css/style.less"],"names":[],"mappings":"AACI;EACE,kBAAA;EACA,YAAA;EACA,2BAAA","file":"style.0dfc70e1.css","sourceRoot":"..","sourcesContent":["@color: goldenrod;\n    h1 {\n      padding: 1rem 2rem;\n      margin: 2rem;\n      border: 1px solid @color;\n    }"]}
