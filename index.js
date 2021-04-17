@@ -1,5 +1,6 @@
 const readline = require('readline-sync')
-var result = [{pair: 0, dpair: 0, set: 0, street: 0, flash: 0, fullHouse: 0, kare: 0, streetFlash: 0, flashRoyal: 0, all: 0}]
+const fs = require("fs")
+
 var res = []
 let cards = [
     {value: 0, in: 0},
@@ -10,53 +11,78 @@ let cards = [
     {value: 0, in: 0},
     {value: 0, in: 0}
 ]
-const accuracy = readline.question("Количество проходов: ")
-for(k = 0; k < accuracy; k++){
-    let cardValue = 0
-    let cardIn = 0
-    var values = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
-    // Заполнение массива картами
-    for(i = 0; i < cards.length; i++){
-        cardValue = getRandomInt(0, values.length - 1)
-        cardIn = getRandomInt(0,3)
-        cards[i].value = values[cardValue]
-        cards[i].in = cardIn
-        for(j = 0; j < i; j++){
-            if(cards[j].value == cards[i].value && cards[j].in == cards[i].in){
-                i--
-                cardIn = 0
-                cardValue = 0
+
+const iterations = [10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000]
+for(itr = 0; itr < iterations.length; itr++){
+    accuracy = iterations[itr]
+    var iterStack = [{pair: 0, dpair: 0, set: 0, street: 0, flash: 0, fullHouse: 0, kare: 0, streetFlash: 0, flashRoyal: 0, all: 0}]
+    for(k = 0; k < accuracy; k++){
+        let cardValue = 0
+        let cardIn = 0
+        var values = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
+        // Заполнение массива картами
+        for(i = 0; i < cards.length; i++){
+            cardValue = getRandomInt(0, values.length - 1)
+            cardIn = getRandomInt(0,3)
+            cards[i].value = values[cardValue]
+            cards[i].in = cardIn
+            for(j = 0; j < i; j++){
+                if(cards[j].value == cards[i].value && cards[j].in == cards[i].in){
+                    i--
+                    cardIn = 0
+                    cardValue = 0
+                }
             }
-        }
 
-        
+            
+        }
+        //Сортировка карт 
+        cards.sort(function(a, b){
+            if(values.indexOf(a.value) < values.indexOf(b.value)){
+                return -1
+            }
+            if(values.indexOf(a.value) > values.indexOf(b.value)){
+                return 1
+            }
+            if(values.indexOf(a.value) == values.indexOf(b.value)){
+                return 0
+            }
+        })
+        res[0] = checkCombo(cards, values)
+        iterStack[0].pair += res[0].pair
+        iterStack[0].dpair += res[0].dpair
+        iterStack[0].set += res[0].set
+        iterStack[0].street += res[0].street
+        iterStack[0].flash += res[0].flash
+        iterStack[0].fullHouse += res[0].fullHouse
+        iterStack[0].kare += res[0].kare
+        iterStack[0].streetFlash += res[0].streetFlash
+        iterStack[0].flashRoyal += res[0].flashRoyal
+        iterStack[0].all = k+1
     }
-    //Сортировка карт 
-    cards.sort(function(a, b){
-        if(values.indexOf(a.value) < values.indexOf(b.value)){
-            return -1
-        }
-        if(values.indexOf(a.value) > values.indexOf(b.value)){
-            return 1
-        }
-        if(values.indexOf(a.value) == values.indexOf(b.value)){
-            return 0
-        }
-    })
-    res[0] = checkCombo(cards, values)
-    result[0].pair += res[0].pair
-    result[0].dpair += res[0].dpair
-    result[0].set += res[0].set
-    result[0].street += res[0].street
-    result[0].flash += res[0].flash
-    result[0].fullHouse += res[0].fullHouse
-    result[0].kare += res[0].kare
-    result[0].streetFlash += res[0].streetFlash
-    result[0].flashRoyal += res[0].flashRoyal
-    result[0].all = k+1
-
+    fs.appendFileSync("./log.csv", "\n" +
+    iterStack[0].all + "," +
+    iterStack[0].pair + "(" + (iterStack[0].pair / iterStack[0].all * 100).toFixed(3) + "%)" + "," +
+    iterStack[0].dpair + "(" + (iterStack[0].dpair / iterStack[0].all * 100).toFixed(3) + "%)" + "," + 
+    iterStack[0].set + "(" + (iterStack[0].set / iterStack[0].all * 100).toFixed(3)  + "%)" + "," + 
+    iterStack[0].street + "(" + (iterStack[0].street / iterStack[0].all * 100).toFixed(3) + "%)" + "," +
+    iterStack[0].flash + "(" + (iterStack[0].flash / iterStack[0].all * 100).toFixed(3) + "%)" + "," + 
+    iterStack[0].fullHouse + "(" + (iterStack[0].fullHouse / iterStack[0].all).toFixed(3) * 100 + "%)" + "," + 
+    iterStack[0].kare + "(" + (iterStack[0].kare / iterStack[0].all* 100).toFixed(3) + "%)" + "," + 
+    iterStack[0].streetFlash + "(" + (iterStack[0].streetFlash / iterStack[0].all * 100).toFixed(3) + "%)" + "," + 
+    iterStack[0].flashRoyal + "(" + (iterStack[0].flashRoyal / iterStack[0].all * 100).toFixed(3) + "%)" + ";")
 }
-console.log(result)
+/*console.log("Всего прогонов: " + iterStack[0].all + "\nКомбинации выпали:\n_______________" +
+"\nПары: " + iterStack[0].pair + "(" + iterStack[0].pair / iterStack[0].all * 100 + "%)" +
+"\nДве пары: " + iterStack[0].dpair + "(" + iterStack[0].dpair / iterStack[0].all * 100 + "%)" +
+"\nСет: " + iterStack[0].set + "(" + iterStack[0].set / iterStack[0].all * 100  + "%)" +
+"\nСтрит: " + iterStack[0].street + "(" + iterStack[0].street / iterStack[0].all * 100 + "%)" +
+"\nФлеш: " + iterStack[0].flash + "(" + iterStack[0].flash / iterStack[0].all * 100 + "%)" +
+"\nФулл хаус: " + iterStack[0].fullHouse + "(" + iterStack[0].fullHouse / iterStack[0].all * 100 + "%)" +
+"\nКаре: " + iterStack[0].kare + "(" + iterStack[0].kare / iterStack[0].all* 100 + "%)" +
+"\nСтрит флеш: " + iterStack[0].streetFlash + "(" + iterStack[0].streetFlash / iterStack[0].all * 100 + "%)" +
+"\nФлеш рояль: " + iterStack[0].flashRoyal + "(" + iterStack[0].flashRoyal / iterStack[0].all * 100 + "%)")*/
+//console.log(iterStack)
 //Функции
 //Рандом
 function getRandomInt(min, max) {
