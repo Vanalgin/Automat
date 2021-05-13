@@ -11,7 +11,7 @@ let cards = [
     {value: 0, in: 0},
     {value: 0, in: 0}
 ]
-
+fs.writeFileSync("./log.csv", "Кол-во итераций,Пара,Две пары,Сет,Стрит,Флеш,Фулл хаус,Каре,Стрит флеш,Флеш рояль;")
 const iterations = [10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000]
 for(itr = 0; itr < iterations.length; itr++){
     accuracy = iterations[itr]
@@ -72,6 +72,7 @@ for(itr = 0; itr < iterations.length; itr++){
     iterStack[0].streetFlash + "(" + (iterStack[0].streetFlash / iterStack[0].all * 100).toFixed(3) + "%)" + "," + 
     iterStack[0].flashRoyal + "(" + (iterStack[0].flashRoyal / iterStack[0].all * 100).toFixed(3) + "%)" + ";")
 }
+console.log("Работа завершена. Результат в файле log.csv")
 /*console.log("Всего прогонов: " + iterStack[0].all + "\nКомбинации выпали:\n_______________" +
 "\nПары: " + iterStack[0].pair + "(" + iterStack[0].pair / iterStack[0].all * 100 + "%)" +
 "\nДве пары: " + iterStack[0].dpair + "(" + iterStack[0].dpair / iterStack[0].all * 100 + "%)" +
